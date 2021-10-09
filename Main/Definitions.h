@@ -34,11 +34,11 @@ int16_t target_position_x;
 int16_t target_position_y;
 int16_t target_speed_x;
 int16_t target_speed_y;
-int16_t max_acceleration_x = MAX_ACCEL_X;  // default maximun acceleration
-int16_t max_acceleration_y = MAX_ACCEL_Y;
-int16_t acceleration_x = MAX_ACCEL_X;
-int16_t acceleration_y = MAX_ACCEL_Y;
-int16_t accel_ramp = ACCEL_RAMP_MIN;
+// int16_t max_acceleration_x = MAX_ACCEL_X;  // default maximun acceleration
+// int16_t max_acceleration_y = MAX_ACCEL_Y;
+// int16_t acceleration_x = MAX_ACCEL_X;
+// int16_t acceleration_y = MAX_ACCEL_Y;
+// int16_t accel_ramp = ACCEL_RAMP_MIN;
 
 int16_t pos_stop_x;
 int16_t pos_stop_y;
@@ -87,7 +87,7 @@ int predict_y;
 int predict_x_old;
 int predict_y_old;
 int predict_time;   // time to impact in ms
-int predict_x_attack;
+int predict_y_attack;
 int predict_time_attack;
 char tempStr2[80];  // for debug porpouses
 
@@ -161,3 +161,9 @@ void robotDetection(int posX, int posY);
 // Function to detect missing steps in steppers
 // When the robot is stopped in a known position (defense position) we compare the estimated position from steppers with the position of the robot seen in the camera.
 void missingStepsDetection();
+
+// void newDataStrategy();
+
+// void robotStrategy();
+
+void IKAngleToServo();
