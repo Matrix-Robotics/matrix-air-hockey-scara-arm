@@ -13,6 +13,20 @@ int debug_counter;
 
 uint32_t micros_old;
 
+// Servo MG996R
+bool to_move = false;
+int shoulder_angle;
+int elbow_angle;
+int shoulder_solver_angle;
+int elbow_solver_angle;
+int shoulder_old_angle;
+int elbow_old_angle;
+int shoulder_map_angle;
+int elbow_map_angle;
+unsigned long servo_timer_old;
+unsigned long servo_progress;
+unsigned long servo_move_time = 200000; // In micro secs
+
 // We have 2 axis => 2 motor controls 0=X axis   1=Y axis  (Y AXIS HAS 2 MOTORS Left and Right)
 int16_t speed_m[2];           // Actual speed of motors
 uint8_t dir_m[2];             // Actual direction of steppers motors
@@ -104,12 +118,12 @@ char SBuffer[14];
 uint8_t readStatus;
 uint8_t readCounter;
 uint8_t newPacket;
-uint16_t com_pos_x;
-uint16_t com_pos_y;
-uint16_t com_speed_x;
-uint16_t com_speed_y;
-uint16_t target_x_mm;
-uint16_t target_y_mm;
+int16_t com_pos_x;
+int16_t com_pos_y;
+int16_t com_speed_x;
+int16_t com_speed_y;
+int16_t target_x_mm;
+int16_t target_y_mm;
 int16_t user_speed_x;
 int16_t user_speed_y;
 int16_t filt_user_speed_x;
@@ -162,8 +176,8 @@ void robotDetection(int posX, int posY);
 // When the robot is stopped in a known position (defense position) we compare the estimated position from steppers with the position of the robot seen in the camera.
 void missingStepsDetection();
 
-// void newDataStrategy();
+void newDataStrategy();
 
-// void robotStrategy();
+void robotStrategy();
 
-void IKAngleToServo();
+// void setPosition();

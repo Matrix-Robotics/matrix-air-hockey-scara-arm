@@ -35,27 +35,32 @@
 // #define Y_AXIS_STEPS_PER_UNIT 19 // 200*8 = 1600 steps/rev = 1600/42teeth*2mm = 19.047, using 19 is an error of 1mm every 40cm not too much! and we use int operations...
 
 // Absolute Min and Max robot positions in mm (measured from center of robot pusher)
-#define ROBOT_MIN_X 100
-#define ROBOT_MIN_Y 80
-#define ROBOT_MAX_X 500
-#define ROBOT_MAX_Y 400
+// (in Robot coord)
+#define ROBOT_MIN_X 60
+#define ROBOT_MIN_Y -210
+#define ROBOT_MAX_X 300
+#define ROBOT_MAX_Y 210
+
+// Set origin robot coordinate (in Camera coord)
+#define ROBOT_ORIGIN_X -32
+#define ROBOT_ORIGIN_Y 240
 
 // This is the center of the table. All units in milimeters
-// Center of robot. The table is 752mmx480mm.
-#define ROBOT_CENTER_X -32 
-#define ROBOT_CENTER_Y 240
+// Center of robot. The table is 752mmx480mm. (in Robot coord)
+#define ROBOT_CENTER_X 180
+#define ROBOT_CENTER_Y 0
 
 // Initial robot position in mm
 // The robot must be at this position at start time
 // Default: Centered in X and minimun position in Y
-#define ROBOT_INITIAL_POSITION_X 300
-#define ROBOT_INITIAL_POSITION_Y 45 // Measured from center of the robot pusher to the table border
+#define ROBOT_INITIAL_POSITION_X 100
+#define ROBOT_INITIAL_POSITION_Y 0 // Measured from center of the robot pusher to the table border
 
 // Robot defense and attack lines
-#define ROBOT_DEFENSE_POSITION 95
+#define ROBOT_DEFENSE_POSITION 100
 #define ROBOT_DEFENSE_ATTACK_POSITION 220
 
-#define POSITION_TOLERANCE 5 // 5 steps
+// #define POSITION_TOLERANCE 5 // 5 steps
 
 // PIX2 Camera pixels
 #define CAM_PIX_WIDTH 315

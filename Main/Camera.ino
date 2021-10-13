@@ -13,12 +13,22 @@ void cameraProcess(int posX, int posY, int time)
 
     // Convert from Camera reference system to Robot reference system origin
     // Get puck position in Robot reference. unit in mm
-    coordX = posX * cam_pix_to_mm - ROBOT_CENTER_X;
-    coordY = posY * cam_pix_to_mm - ROBOT_CENTER_Y;
+    coordX = posX * cam_pix_to_mm - ROBOT_ORIGIN_X;
+    coordY = posY * cam_pix_to_mm - ROBOT_ORIGIN_Y;
+
+    // Serial.print("coordX:");
+    // Serial.print(coordX);
+    // Serial.print(" | coordY:");
+    // Serial.println(coordY);
 
     // Speed calculation on each axis
     vectorX = (coordX - puckCoordX);
     vectorY = (coordY - puckCoordY);
+
+    // Serial.print("vectorX:");
+    // Serial.print(vectorX);
+    // Serial.print(" | vectorY:");
+    // Serial.println(vectorY);
 
     puckOldCoordX = puckCoordX;
     puckOldCoordY = puckCoordY;
@@ -46,11 +56,11 @@ void cameraProcess(int posX, int posY, int time)
     else
     {
         if (myAbs(puckSpeedX - puckOldSpeedX) < 50)
-            puckSpeedXAverage = (puckSpeedX + puckOldSpeedX) >> 1;
+            puckSpeedXAverage = (puckSpeedX + puckOldSpeedX) / 2;
         else
             puckSpeedXAverage = puckSpeedX;
         if (myAbs(puckSpeedY - puckOldSpeedY) < 50)
-            puckSpeedYAverage = (puckSpeedY + puckOldSpeedY) >> 1;
+            puckSpeedYAverage = (puckSpeedY + puckOldSpeedY) / 2;
         else
             puckSpeedYAverage = puckSpeedY;
     }
@@ -127,7 +137,7 @@ void cameraProcess(int posX, int posY, int time)
                 {
                     // average of the results (some noise filtering)
                     if (predict_y_old != -1)
-                        predict_y = (predict_y_old + predict_y) >> 1;
+                        predict_y = (predict_y_old + predict_y) / 2;
                     predict_y_old = predict_y;
                     // We introduce a factor (130 instead of 100) to model the bounce (30% loss in speed)(to improcve...)
                     predict_time = predict_time + (predict_x - puckCoordX) * 130L / puckSpeedX; // in ms
@@ -146,7 +156,7 @@ void cameraProcess(int posX, int posY, int time)
             {
                 // average of the results (some noise filtering)
                 if (predict_y_old != -1)
-                    predict_y = (predict_y_old + predict_y) >> 1;
+                    predict_y = (predict_y_old + predict_y) / 2;
                 predict_y_old = predict_y;
 
                 predict_time = (predict_x - puckCoordX) * 100L / puckSpeedX;              // in ms
@@ -186,33 +196,33 @@ void cameraProcessInit()
     predict_y_old = -1;
 }
 
-// Robot position detection. Transformation from camera reference system (in pixels) to robot reference system
-void robotDetection(int posX, int posY)
-{
-    int coordX;
-    int coordY;
+// // Robot position detection. Transformation from camera reference system (in pixels) to robot reference system
+// void robotDetection(int posX, int posY)
+// {
+//     int coordX;
+//     int coordY;
 
-    // Convert from Camera reference system to Robot reference system
-    // We suppose very small angle rotatios (less than 5 degrees) so we use the
-    // aproximation that sin cam_rotation = cam_rotation (in radians)
-    coordX = posX;   // First we convert image coordinates to center of image
-    coordY = posY;
+//     // Convert from Camera reference system to Robot reference system
+//     // We suppose very small angle rotatios (less than 5 degrees) so we use the
+//     // aproximation that sin cam_rotation = cam_rotation (in radians)
+//     coordX = posX;   // First we convert image coordinates to center of image
+//     coordY = posY;
 
-    coordX = coordX * cam_pix_to_mm - ROBOT_CENTER_X;
-    coordY = coordY * cam_pix_to_mm - ROBOT_CENTER_Y;
+//     coordX = coordX * cam_pix_to_mm - ROBOT_CENTER_X;
+//     coordY = coordY * cam_pix_to_mm - ROBOT_CENTER_Y;
 
-    // Valid coordinates?
-    if (coordX > 60 && coordX < 720 && coordY > -210 && coordY < 210)
-    {
-        robotCoordX = coordX;
-        robotCoordY = coordY;
-    }
-    else
-    {
-        robotCoordX = 0;
-        robotCoordY = 0;
-    }
-}
+//     // Valid coordinates?
+//     if (coordX > 60 && coordX < 720 && coordY > -210 && coordY < 210)
+//     {
+//         robotCoordX = coordX;
+//         robotCoordY = coordY;
+//     }
+//     else
+//     {
+//         robotCoordX = 0;
+//         robotCoordY = 0;
+//     }
+// }
 
 // Function to detect missing steps in steppers
 // When the robot is stopped in a known position (defense position) we compare the estimated position from steppers with the position of the robot seen in the camera.
