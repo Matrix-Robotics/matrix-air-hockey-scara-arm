@@ -23,9 +23,10 @@ int shoulder_old_angle;
 int elbow_old_angle;
 int shoulder_map_angle;
 int elbow_map_angle;
-unsigned long servo_timer_old;
+unsigned long servo_timer_old;;
+unsigned long servo_progress_old;
 unsigned long servo_progress;
-unsigned long servo_move_time = 400000; // In micro secs
+unsigned long servo_move_time = 250000; // In micro secs
 
 // We have 2 axis => 2 motor controls 0=X axis   1=Y axis  (Y AXIS HAS 2 MOTORS Left and Right)
 // int16_t speed_m[2];           // Actual speed of motors

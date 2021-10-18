@@ -7,6 +7,8 @@
 int lengths[] = {192, 216}; // {shoulder, elbow} link length
 float initAngle[] = {101, -162};
 
+float tool_angle = 0;
+
 int dt = 16; //60 Hz = 16.66ms
 
 Fabrik2D fabrik2D(3, lengths); // 3 Joints in total
@@ -42,7 +44,9 @@ void setup()
 
     // Timer setup
     timer_old = micros();
-    servo_timer_old = micros();
+    servo_timer_old = timer_old;
+
+    servo_progress_old = timer_old;
 }
 
 void loop()
@@ -83,6 +87,42 @@ void loop()
         shoulder_solver_angle = 140 - fabrik2D.getAngle(0) * RAD_TO_DEG; // In degrees
         elbow_solver_angle = 160 + fabrik2D.getAngle(1) * RAD_TO_DEG;    // In degrees
 
+        if(shoulder_solver_angle >= 180 || elbow_solver_angle >= 180) {
+            
+            bool solved = fabrik2D.solve(com_pos_x, com_pos_y, tool_angle, lengths);
+            
+            // tool angle loop
+            while(!solved) {
+                Serial.println(tool_angle);
+
+                tool_angle -= M_PI/8;
+                
+                if(tool_angle < -3*M_PI/4) {
+                    shoulder_solver_angle = 50;
+                    elbow_solver_angle = 7;
+                    break;
+                }
+
+                solved = fabrik2D.solve(com_pos_x, com_pos_y, tool_angle, lengths);
+                shoulder_solver_angle = 140 - fabrik2D.getAngle(0) * RAD_TO_DEG; // In degrees
+                elbow_solver_angle = 160 + fabrik2D.getAngle(1) * RAD_TO_DEG;    // In degrees
+            }
+
+            tool_angle = 0;
+
+
+
+            // for(int i=0; i > -M_PI/2; i--) {
+            //     Serial.println("fuck");
+            //     if (fabrik2D.solve(com_pos_x, com_pos_y, i, lengths)) {
+            //         shoulder_solver_angle = 140 - fabrik2D.getAngle(0) * RAD_TO_DEG; // In degrees
+            //         elbow_solver_angle = 160 + fabrik2D.getAngle(1) * RAD_TO_DEG;    // In degrees
+            //         break;
+            //     }
+            // };
+
+        }
+
         // Serial.print("com_pos_x = ");
         // Serial.print(com_pos_x);
         // Serial.print(", com_pos_y = ");
@@ -94,10 +134,10 @@ void loop()
         // Serial.print(", elbow_angle = ");
         // Serial.println(fabrik2D.getAngle(1));
 
-        Serial.print("shoulder_solver_angle = ");
-        Serial.print(shoulder_solver_angle);
-        Serial.print(", elbow_solver_angle = ");
-        Serial.println(elbow_solver_angle);
+        // Serial.print("shoulder_solver_angle = ");
+        // Serial.print(shoulder_solver_angle);
+        // Serial.print(", elbow_solver_angle = ");
+        // Serial.println(elbow_solver_angle);
         Serial.println("=====================");
     }
 
@@ -108,20 +148,32 @@ void loop()
         {
             to_move = true;
 
-            shoulder_angle = shoulder_solver_angle;
-            elbow_angle = elbow_solver_angle;
+            // if(shoulder_solver_angle >= 180) {
+            //     shoulder_angle = 50;
+            // } else {
+                shoulder_angle = shoulder_solver_angle;
+            // }
 
-            servo_timer_old = timer_value;
+            // if(elbow_solver_angle >= 180) {
+            //     elbow_angle = 7;
+            // } else {
+                elbow_angle = elbow_solver_angle;
+            // }
+
+            servo_progress_old = timer_value;
+
         } else {
             Mini.RC1.set(shoulder_solver_angle);
             Mini.RC2.set(elbow_solver_angle);
         }
     }
     
-    servo_progress = timer_value - servo_timer_old;
+    servo_progress = timer_value - servo_progress_old;
 
-    if (servo_progress <= servo_move_time)
+    if (servo_progress <= servo_move_time && (timer_value - servo_timer_old) >= 10)
     {
+        servo_timer_old = timer_value;
+
         shoulder_map_angle = map(servo_progress, 0, servo_move_time, shoulder_old_angle, shoulder_angle);
         elbow_map_angle = map(servo_progress, 0, servo_move_time, elbow_old_angle, elbow_angle);
         
@@ -136,14 +188,13 @@ void loop()
         // Serial.print("servo_progress = ");
         // Serial.println(servo_progress);
         // Serial.println("=====================");
-    }
-    else
-    {
+    } else {
         to_move = false;
+        
         shoulder_old_angle = shoulder_angle;
         elbow_old_angle = elbow_angle;
 
-        servo_timer_old = timer_value;
+        servo_progress_old = timer_value;
     }
 
     // Serial.print("shoulder_angle = ");
