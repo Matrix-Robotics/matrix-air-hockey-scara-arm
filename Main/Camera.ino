@@ -36,7 +36,7 @@ void cameraProcess(int posX, int posY, int time)
     puckCoordY = coordY;
 
     // Noise detection, if there are a big vector this should be noise
-    if ((vectorY < -160) || (vectorY > 160) || (vectorX > 160) || (vectorX < -160))
+    if ((vectorY < -100) || (vectorY > 100) || (vectorX > 100) || (vectorX < -100))
     {
         Serial.println("NOISE");
         predict_status = -1;
@@ -56,11 +56,11 @@ void cameraProcess(int posX, int posY, int time)
     else
     {
         if (myAbs(puckSpeedX - puckOldSpeedX) < 50)
-            puckSpeedXAverage = (puckSpeedX + puckOldSpeedX) / 2;
+            puckSpeedXAverage = (puckSpeedX + puckOldSpeedX) >> 1;
         else
             puckSpeedXAverage = puckSpeedX;
         if (myAbs(puckSpeedY - puckOldSpeedY) < 50)
-            puckSpeedYAverage = (puckSpeedY + puckOldSpeedY) / 2;
+            puckSpeedYAverage = (puckSpeedY + puckOldSpeedY) >> 1;
         else
             puckSpeedYAverage = puckSpeedY;
     }
@@ -139,7 +139,7 @@ void cameraProcess(int posX, int posY, int time)
                     if (predict_y_old != -1)
                         predict_y = (predict_y_old + predict_y) / 2;
                     predict_y_old = predict_y;
-                    // We introduce a factor (130 instead of 100) to model the bounce (30% loss in speed)(to improcve...)
+                    // We introduce a factor (130 instead of 100) to model the bounce (30% loss in speed)(to improve...)
                     predict_time = predict_time + (predict_x - puckCoordX) * 130L / puckSpeedX; // in ms
                 }
             }

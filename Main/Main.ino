@@ -29,11 +29,11 @@ void setup()
     // Pixy setup
     // sigmap means allow signature range
     // Ex: sigmap = 3, means allowed signatures are: 1, 2, 3. (max is 7)
-    Mini.I2C1.PIXYcam.pixyinit(3);
+    Mini.I2C1.PIXYcam.pixyinit(1);
     cameraProcessInit();
 
     // IK solver setup
-    fabrik2D.setTolerance(0.5);
+    fabrik2D.setTolerance(1);
     // fabrik2D.setJoints(initAngle, lengths);
 
     // Robot strategy setup
@@ -72,27 +72,33 @@ void loop()
 
         robotStrategy();
 
-        Serial.print("robot_status: ");
-        Serial.println(robot_status);
+        // Serial.print("robot_status: ");
+        // Serial.println(robot_status);
 
         // Solve inverse kinematics given the coordinates x and y and the list of lengths for the arm.
         // fabrik2D.solve(100, y, lengths);
         fabrik2D.solve(com_pos_x, com_pos_y, lengths);
+        // fabrik2D.solve(260, -210, lengths);
 
         shoulder_solver_angle = 140 - fabrik2D.getAngle(0) * RAD_TO_DEG; // In degrees
         elbow_solver_angle = 160 + fabrik2D.getAngle(1) * RAD_TO_DEG;    // In degrees
 
-        Serial.print("com_pos_x = ");
-        Serial.print(com_pos_x);
-        Serial.print(", com_pos_y = ");
-        Serial.println(com_pos_y);
-        Serial.println("=====================");
-
-        // Serial.print("shoulder_angle = ");
-        // Serial.print(shoulder_angle);
-        // Serial.print(", elbow_angle = ");
-        // Serial.println(elbow_angle);
+        // Serial.print("com_pos_x = ");
+        // Serial.print(com_pos_x);
+        // Serial.print(", com_pos_y = ");
+        // Serial.println(com_pos_y);
         // Serial.println("=====================");
+
+        // Serial.print("fabrik2D.getAngle(0) = ");
+        // Serial.print(fabrik2D.getAngle(0));
+        // Serial.print(", elbow_angle = ");
+        // Serial.println(fabrik2D.getAngle(1));
+
+        Serial.print("shoulder_solver_angle = ");
+        Serial.print(shoulder_solver_angle);
+        Serial.print(", elbow_solver_angle = ");
+        Serial.println(elbow_solver_angle);
+        Serial.println("=====================");
     }
 
 

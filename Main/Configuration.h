@@ -37,9 +37,9 @@
 // Absolute Min and Max robot positions in mm (measured from center of robot pusher)
 // (in Robot coord)
 #define ROBOT_MIN_X 60
-#define ROBOT_MIN_Y -210
+#define ROBOT_MIN_Y -200
 #define ROBOT_MAX_X 300
-#define ROBOT_MAX_Y 210
+#define ROBOT_MAX_Y 200
 
 // Set origin robot coordinate (in Camera coord)
 #define ROBOT_ORIGIN_X -32
@@ -58,7 +58,7 @@
 
 // Robot defense and attack lines
 #define ROBOT_DEFENSE_POSITION 100
-#define ROBOT_DEFENSE_ATTACK_POSITION 220
+#define ROBOT_DEFENSE_ATTACK_POSITION 200
 
 // #define POSITION_TOLERANCE 5 // 5 steps
 

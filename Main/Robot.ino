@@ -100,11 +100,11 @@ void robotStrategy()
         // ATTACK MODE
         if (attack_time == 0)
         {
-            attack_predict_y = predictPuckYPosition(500);
-            attack_predict_x = predictPuckXPosition(500);
+            attack_predict_y = predictPuckYPosition(200);
+            attack_predict_x = predictPuckXPosition(200);
             if ((attack_predict_y > -210) && (attack_predict_y < 210) && (attack_predict_x > 60) && (attack_predict_x < 280))
             {
-                attack_time = millis() + 500;    // Prepare an attack in 500ms
+                attack_time = millis() + 300;    // Prepare an attack in 500ms
                 attack_pos_y = attack_predict_y; // predict_x
                 attack_pos_x = attack_predict_x; // predict_y
                 Serial.print("AM:");
@@ -116,7 +116,7 @@ void robotStrategy()
                 //Serial.print(" ");
                 // Go to pre-attack position
                 com_pos_y = attack_pos_y;
-                com_pos_x = attack_pos_x - 120;
+                com_pos_x = attack_pos_x - 60;
                 // setSpeedS(com_speed_y / 2, com_speed_x / 2);
                 // setPosition(com_pos_x, com_pos_y);
                 attack_status = 1;
@@ -136,18 +136,18 @@ void robotStrategy()
         {
             if (attack_status == 1)
             {
-                if ((attack_time - millis()) < 200)
+                if ((attack_time - millis()) < 300)
                 {
                     // Attack movement
-                    com_pos_y = predictPuckXPosition(200);
-                    com_pos_x = predictPuckYPosition(200) + 80;
+                    com_pos_y = predictPuckYPosition(50);
+                    com_pos_x = predictPuckXPosition(50) + 50;
                     // setSpeedS(com_speed_y, com_speed_x);
                     // setPosition(com_pos_x, com_pos_y);
 
                     Serial.print("ATTACK:");
                     Serial.print(com_pos_y);
                     Serial.print(",");
-                    Serial.println(com_pos_x - 80);
+                    Serial.println(com_pos_x - 50);
 
                     attack_status = 2; // Attacking
                 }
@@ -155,14 +155,14 @@ void robotStrategy()
                 {
                     // Go to pre-attack position
                     com_pos_y = attack_pos_y;
-                    com_pos_x = attack_pos_x - 120;
+                    com_pos_x = attack_pos_x - 60;
                     // setSpeedS(com_speed_y / 2, com_speed_x / 2);
                     // setPosition(com_pos_x, com_pos_y);
                 }
             }
             if (attack_status == 2)
             {
-                if (millis() > (attack_time + 80)) // Attack move is done? => Reset to defense position
+                if (millis() > (attack_time + 50)) // Attack move is done? => Reset to defense position
                 {
                     Serial.print("RESET");
                     attack_time = 0;
