@@ -7,7 +7,9 @@
 int lengths[] = {192, 216}; // {shoulder, elbow} link length
 float initAngle[] = {101, -162};
 
-float tool_angle = 0;
+// float tool_angle = -M_PI/2;
+
+// bool solved = false;
 
 int dt = 16; //60 Hz = 16.66ms
 
@@ -20,7 +22,8 @@ void setup()
     Serial.println("Matrix Mini Test - PIXY2 Camera\n");
     Serial.println("PIXY2 Camera on I2C port 1");
 
-    Mini.begin();
+    // Mini.begin();
+    Mini.begin(LI_2);
 
     // Servo setup
     shoulder_old_angle = 50;
@@ -35,7 +38,7 @@ void setup()
     cameraProcessInit();
 
     // IK solver setup
-    fabrik2D.setTolerance(1);
+    fabrik2D.setTolerance(20);
     // fabrik2D.setJoints(initAngle, lengths);
 
     // Robot strategy setup
@@ -87,33 +90,39 @@ void loop()
         shoulder_solver_angle = 140 - fabrik2D.getAngle(0) * RAD_TO_DEG; // In degrees
         elbow_solver_angle = 160 + fabrik2D.getAngle(1) * RAD_TO_DEG;    // In degrees
 
-        if(shoulder_solver_angle >= 180 || elbow_solver_angle >= 180) {
-            
-            bool solved = fabrik2D.solve(com_pos_x, com_pos_y, tool_angle, lengths);
-            
+        if (shoulder_solver_angle >= 180 || elbow_solver_angle >= 180) {
+            // Serial.println("wut?!");
+            // fabrik2D.solve(com_pos_x, com_pos_y, lengths);
+            // bool solved = fabrik2D.solve(com_pos_x, com_pos_y, lengths);
+
+            shoulder_solver_angle = 140 - (fabrik2D.getAngle(1) + fabrik2D.getAngle(0)) * RAD_TO_DEG; // In degrees
+            elbow_solver_angle = 160 + (- fabrik2D.getAngle(1) * RAD_TO_DEG);    // In degrees  
+
+            // Serial.print("solved: ");
+            // Serial.println(solved);
+
             // tool angle loop
-            while(!solved) {
-                Serial.println(tool_angle);
+            // while(!solved) {
+            //     // Serial.print("tool_angle: ");
+            //     // Serial.println(tool_angle);
 
-                tool_angle -= M_PI/8;
-                
-                if(tool_angle < -3*M_PI/4) {
-                    shoulder_solver_angle = 50;
-                    elbow_solver_angle = 7;
-                    break;
-                }
+            //     // tool_angle += M_PI/24;
 
-                solved = fabrik2D.solve(com_pos_x, com_pos_y, tool_angle, lengths);
-                shoulder_solver_angle = 140 - fabrik2D.getAngle(0) * RAD_TO_DEG; // In degrees
-                elbow_solver_angle = 160 + fabrik2D.getAngle(1) * RAD_TO_DEG;    // In degrees
-            }
+            //     solved = fabrik2D.solve(com_pos_x, com_pos_y, lengths);
 
-            tool_angle = 0;
+            //     // if(tool_angle < 0) {
+            //     //     Serial.println("no solution!");
+            //     //     Serial.println(fabrik2D.solve(100, 0, -1.0, lengths));
+            //     //     break;
+            //     // }
+
+            // }
+
+            // tool_angle = -M_PI/4;
 
 
 
             // for(int i=0; i > -M_PI/2; i--) {
-            //     Serial.println("fuck");
             //     if (fabrik2D.solve(com_pos_x, com_pos_y, i, lengths)) {
             //         shoulder_solver_angle = 140 - fabrik2D.getAngle(0) * RAD_TO_DEG; // In degrees
             //         elbow_solver_angle = 160 + fabrik2D.getAngle(1) * RAD_TO_DEG;    // In degrees
@@ -134,11 +143,13 @@ void loop()
         // Serial.print(", elbow_angle = ");
         // Serial.println(fabrik2D.getAngle(1));
 
+        // Serial.print("tool_angle = ");
+        // Serial.print(tool_angle);
         // Serial.print("shoulder_solver_angle = ");
         // Serial.print(shoulder_solver_angle);
         // Serial.print(", elbow_solver_angle = ");
         // Serial.println(elbow_solver_angle);
-        Serial.println("=====================");
+        // Serial.println("=====================");
     }
 
 
